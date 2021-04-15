@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Author: Clarence Kong<clarencekong@qq.com,https://github.com/Clarence-Kong>
-# @Time: 3/7/2021 11:03 PM
+# @Time: 4/10/2021 7:31 PM
 
 import urllib.request
 import urllib.parse
@@ -15,7 +15,7 @@ def strip_content(content):
     return content.strip()
 
 
-class CrimeSpider:
+class PolicySpider:
     def __init__(self):
         self.conn = pymongo.MongoClient()
         self.db = self.conn['policy']
@@ -31,11 +31,6 @@ class CrimeSpider:
         html = res.read().decode('utf-8')
         return html
 
-    ''' 获取类型对应问题 '''
-
-    def get_type_ques(self, type_id):
-
-        return
 
     '''获取信息'''
 
@@ -288,7 +283,7 @@ class CrimeSpider:
             print(e)
 
 
-handler = CrimeSpider()
+handler = PolicySpider()
 # handler.depart_detect('http://12345.zs.gov.cn/public/item/catalogList.do')
 handler.inspect_ques()
 # handler.content_parser('http://12345.zs.gov.cn/searchBF/input.do?id=110001315&searchName=')
