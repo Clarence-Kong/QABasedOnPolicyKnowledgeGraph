@@ -1,14 +1,54 @@
 {
-  "url": "link",
-  "type": "文化体育",
-  "parent_id":202,
-  "title": "职业资格证书补办(网站)",
-  "content": "blabla"
-}
-//  "self_id": 110001315,
-/*
-"attach": {
-    "name": " 广东省中山市国家职业资格证书修改补发申请表.doc",
-    "url": "Test"
+  "_id": {
+    "$oid": "607d99f9ac0354eef3dd0dc0"
   },
-*/
+  "TASK_CODE": "1144200032477691303440102001001",
+  "ORGCODE": "324776913",
+  "TASK_TYPE_TEXT": "行政许可",
+  "LIMIT_SCENE_NUM": "0",
+  "TASK_STATE": null,
+  "CATANAME": "中外合作办学审核审批",
+  "DEPT_NAME": "中山市教育和体育局",
+  "AREA_CODE_TEXT": "广东省中山市",
+  "parentCatalogId": "44010200100Y",
+  "TASK_TYPE": "01",
+  "TASK_NAME": "中外合作开办学前教育机构审批",
+  "subTaskName": null,
+  "parentCatalogName": "中外合作办学审核审批",
+  "CATAID": "440102001001",
+  "URL": "http://zsbs.zs.gov.cn/zsonline/businessguide/viewGuide.action?code=1144200032477691303440102001001&fromType=gdbs",
+  "TASK_TAG": null,
+  "AREACODE": "442000",
+  "subCatalogName": "中外合作开办学前教育机构审批",
+  "ONLINECHECK": "1",
+  "matter_name": "中外合作开办学前教育机构审批",
+  "matter_short": "不收费",
+  "matter_daily": "无",
+  "matter_code": "无",
+  "matter_level": "市级",
+  "visit_number": "0",
+  "co_department": "无",
+  "handle_location": "办理地点：中山市东区博爱六路22号市行政服务中心C区C10、C11、C12窗口",
+  "handle_time": "办公时间：周一至周五：上午9：00至12：00，下午13：30至17：00，法定节假日除外",
+  "handle_time_limit": "办公时间：周一至周五：上午9：00至12：00，下午13：30至17：00，法定节假日除外",
+  "handle_type": "1 (工作日)",
+  "accept_standard": "1.国家机构以外的社会组织或者个人（大陆境内）利用非国家财政性经费，在各行政区域内面向社会举办中外合作开办教育机构，由各区教育行政部门按照国家规定的权限审批。",
+  "consult_phone": "0760-89817133",
+  "courier_service": "是",
+  "bear_paltform": "中山市统一申办受理平台",
+  "complain_phone": "0760-12345",
+  "charge": "无",
+  "online_book": "是",
+  "online_book_addr": "http://www.zszwfw.cn/call/front/website/online/yytake!index.action",
+  "district": "市级",
+  "theme_category": [
+    "教育科研",
+    "升学",
+    "儿童青少年"
+  ],
+  "service_object_name": [
+    "自然人",
+    "企业法人",
+    "社会组织法人"
+  ]
+}

@@ -11,12 +11,14 @@ from lxml import etree
 import pymongo
 import re
 
+# mongoexport -h 127.0.0.1 -d policy -c test -o C:\Users\ckong\projects\QABasedOnPolicyKnowledgeGraph\data\policy.json
+# mongoexport --db=policy --collection=test --out=policy.json
 
 class MainData:
     def __init__(self):
         self.conn = pymongo.MongoClient()
         self.db = self.conn['policy']
-        self.col = self.db['test']
+        self.col = self.db['main']
 
         ''' 转义html '''
 
@@ -67,17 +69,21 @@ class MainData:
         info['accept_standard'] = selector.xpath('//h3[contains(text(),"受理条件")]/following-sibling::p[1]/text()')[
             0].strip()
         info['consult_phone'] = selector.xpath('//p[contains(text(),"咨询电话")]/following-sibling::p[1]/text()')[0].strip()
+        info['district'] = selector.xpath('//th[contains(text(),"行使层级")]/following-sibling::td[1]/p/text()')[
+            0].strip()
         info['courier_service'] = selector.xpath('//th[contains(text(),"是否支持物流快递")]/following-sibling::td[1]/p/text()')[
             0].strip()
         info['bear_paltform'] = selector.xpath('//th[contains(text(),"业务系统")]/following-sibling::td[1]/p/text()')[
             0].strip()
         info['complain_phone'] = selector.xpath('//p[contains(text(),"投诉电话")]/following-sibling::p[1]/text()')[
             0].strip()
-        info['charge'] = selector.xpath('//h2[contains(text(),"收费项目信息")]/following-sibling::p[1]/text()')[0].strip()
+        # info['charge'] = selector.xpath('//h2[contains(text(),"收费项目信息")]/following-sibling::p[1]/text()')[0].strip()
         info['online_book'] = selector.xpath('//th[contains(text(),"是否网办")]/following-sibling::td[1]/text()')[0].strip()
         info['online_book_addr'] = selector.xpath("//th[contains(text(),'在线预约地址')]/following-sibling::td[1]//a/@href")[
             0]
-        info['executer'] = selector.xpath('//th[contains(text(),"实施主体")]/following-sibling::td[1]/p/text()')[0].strip()
+        info['executer'] = selector.xpath('//th[contains(text(),"实施主体")]/following-sibling::td[1]/a/text()')[0].strip()
+        info['theme_category'] = selector.xpath('//th[contains(text(),"面向自然人事项主题分类")]/following-sibling::td[1]/p/text()')[0].strip().split(',')
+        info['service_object_name'] = selector.xpath('//th[contains(text(),"服务对象")]/following-sibling::td[1]/p/text()')[0].strip().split(',')
 
         # info['collect_resource_center'] = selector.xpath('')
         # info['service_content'] = selector.xpath('')
@@ -89,7 +95,6 @@ class MainData:
         # info['setting_basis'] = selector.xpath('')
         # info['service_theme_name'] = selector.xpath('')
         # info['service_object_name'] = selector.xpath('')
-        print(info)
         return info
 
     ''' 获取每条政务信息 '''
@@ -132,7 +137,7 @@ class MainData:
             "X-Requested-With": "XMLHttpRequest"
         }
         count = 0
-        for page in range(1, 2):
+        for page in range(49, 51):
             print('data page num is : ', page)
             data_req['pageNum'] = page
             res = requests.post(url, data=data_req, headers=headers_req)
@@ -146,8 +151,8 @@ class MainData:
                 custom = data['CUSTOM']
                 all_list = custom['AUDIT_ITEMLIST']
                 # print(all_list)
-                for index in range(0, len(all_list) - 9):
-                    print('名称: ', all_list[index]['subCatalogName'])
+                for index in range(0, len(all_list)):
+                    print('名称: ', all_list[index]['TASK_NAME'])
                     count = count + 1
                     info = self.get_matter_info(all_list[index]['TASK_CODE'])
                     # print({...info})
@@ -167,11 +172,14 @@ class MainData:
                     all_list[index]['courier_service'] = info['courier_service']
                     all_list[index]['bear_paltform'] = info['bear_paltform']
                     all_list[index]['complain_phone'] = info['complain_phone']
-                    all_list[index]['charge'] = info['matter_short']
-                    all_list[index]['matter_short'] = info['charge']
+                    # all_list[index]['charge'] = info['charge']
+                    all_list[index]['matter_short'] = info['matter_short']
                     all_list[index]['online_book'] = info['online_book']
                     all_list[index]['online_book_addr'] = info['online_book_addr']
-                    all_list[index]['executer'] = info['executer']
+                    all_list[index]['consult_phone'] = info['consult_phone']
+                    all_list[index]['district'] = info['district']
+                    all_list[index]['theme_category'] = info['theme_category']
+                    all_list[index]['service_object_name'] = info['service_object_name']
                     self.col.insert(all_list[index])
 
                 print('页数: ', page, ' 总数：', count)
