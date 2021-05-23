@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# Author: Clarence Kong<clarencekong@qq.com,https://github.com/Clarence-Kong>
-# @Time: 3/7/2021 11:03 PM
 import time
 import urllib.request
-import urllib.parse
 import urllib.parse
 import json
 import requests
@@ -58,14 +55,12 @@ class MainData:
             0].strip()
         info['handle_location'] = selector.xpath('//h2[contains(text(),"窗口办理")]/following-sibling::div[1]/p[2]/text()')[
             0].strip()
-        info['handle_time'] = selector.xpath('//h2[contains(text(),"窗口办理")]/following-sibling::div[1]/p[4]/text()')[
+        info['handle_time'] = selector.xpath('//th[contains(text(),"法定办结时限")]/following-sibling::td[1]/p/text()')[
             0].strip()
         info['handle_time_limit'] = \
-            selector.xpath('//h2[contains(text(),"窗口办理")]/following-sibling::div[1]/p[4]/text()')[0].strip()
-        info['handle_type'] = selector.xpath('//th[contains(text(),"承诺办结时限")]/following-sibling::td[1]/p/text()')[
-            0].strip().replace('\r', '').replace('\n', '').replace('\xa0', '').replace('   ',
-                                                                                       '').replace(
-            '\t', '')
+            selector.xpath('//th[contains(text(),"承诺办结时限")]/following-sibling::td[1]/p/text()')[0].strip()
+        info['matter_type'] = selector.xpath('//th[contains(text(),"事项类型")]/following-sibling::td[1]/p/text()')[
+            0].strip()
         info['accept_standard'] = selector.xpath('//h3[contains(text(),"受理条件")]/following-sibling::p[1]/text()')[
             0].strip()
         info['consult_phone'] = selector.xpath('//p[contains(text(),"咨询电话")]/following-sibling::p[1]/text()')[0].strip()
@@ -166,7 +161,7 @@ class MainData:
                     all_list[index]['handle_location'] = info['handle_location']
                     all_list[index]['handle_time'] = info['handle_time']
                     all_list[index]['handle_time_limit'] = info['handle_time_limit']
-                    all_list[index]['handle_type'] = info['handle_type']
+                    all_list[index]['matter_type'] = info['matter_type']
                     all_list[index]['accept_standard'] = info['accept_standard']
                     all_list[index]['consult_phone'] = info['consult_phone']
                     all_list[index]['courier_service'] = info['courier_service']
