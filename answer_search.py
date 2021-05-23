@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# Author: Clarence Kong<clarencekong@qq.com,https://github.com/Clarence-Kong>
-# @Time: 4/20/2021 10:43 PM
 
 from py2neo import Graph
 
@@ -8,10 +6,10 @@ from py2neo import Graph
 class AnswerSearcher:
     def __init__(self):
         self.g = Graph(
-            host="127.0.0.1",
-            http_port=7474,
-            user="lhy",
-            password="lhy123")
+            # host="127.0.0.1",
+            # http_port=7474,
+            user="neo4j",
+            password="ckong")
         self.num_limit = 20
 
     '''执行cypher查询，并返回相应结果'''
@@ -36,30 +34,50 @@ class AnswerSearcher:
         final_answer = []
         if not answers:
             return ''
-        if question_type == 'disease_symptom':
-            desc = [i['n.name'] for i in answers]
+        if question_type == 'matter_short':
+            name = answers[0]['m.mater_short']
             subject = answers[0]['m.name']
-            final_answer = '{0}的症状包括：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
+            if name:
+                final_answer = '{0}的别称是：{1}'.format(subject, '；'.join(list(set(name))[:self.num_limit]))
+            else:
+                final_answer = '{0}没有别称'.format(subject)
 
-        elif question_type == 'symptom_disease':
-            desc = [i['m.name'] for i in answers]
-            subject = answers[0]['n.name']
-            final_answer = '症状{0}可能染上的疾病有：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
-
-        elif question_type == 'disease_cause':
-            desc = [i['m.cause'] for i in answers]
+        elif question_type == 'matter_code':
+            code = answers[0]['m.matter_code']
+            print(answers, 'ans')
             subject = answers[0]['m.name']
-            final_answer = '{0}可能的成因有：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
+            if code:
+                final_answer = '事项 {0} 的事项编码是：{1}'.format(subject, '；'.join(list(set(code))[:self.num_limit]))
+            else:
+                final_answer = '{0} 没有事项编码'.format(subject)
 
-        elif question_type == 'disease_prevent':
-            desc = [i['m.prevent'] for i in answers]
+        elif question_type == 'visit_number':
+            num = answers[0]['m.visit_number']
             subject = answers[0]['m.name']
-            final_answer = '{0}的预防措施包括：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
+            if num:
+                if num:
+                    final_answer = '{0} 不需要线下办理'.format(subject)
+                else:
+                    final_answer = '{0}你只需要去：{1}'.format(subject, '；'.join(list(set(num))[:self.num_limit]))
+            else:
+                final_answer = '{0} 不知道要去几次'.format(subject)
 
-        elif question_type == 'disease_lasttime':
-            desc = [i['m.cure_lasttime'] for i in answers]
+        elif question_type == 'consult_phone':
+            phone = answers[0]['m.consult_phone']
+            print(answers,'ans')
             subject = answers[0]['m.name']
-            final_answer = '{0}治疗可能持续的周期为：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
+            if phone:
+                final_answer = '{0}事项的咨询电话是：{1}'.format(subject, phone)
+            else:
+                final_answer = '{0} 不知道电话是多少'.format(subject)
+
+        elif question_type == 'bear_paltform':
+            bear = answers[0]['m.bear_paltform']
+            subject = answers[0]['m.name']
+            if bear:
+                final_answer = '{0}的承办系统是：{1}'.format(subject, bear)
+            else:
+                final_answer = '{0} 不知道是哪个系统'.format(subject)
 
         elif question_type == 'disease_cureway':
             desc = [';'.join(i['m.cure_way']) for i in answers]

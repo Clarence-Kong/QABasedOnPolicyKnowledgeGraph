@@ -84,3 +84,26 @@
 |                      |                      ||
 
 ![image-20210416221036232](C:\Users\ckong\AppData\Roaming\Typora\typora-user-images\image-20210416221036232.png)
+
+# 2.3　支持问答类型
+
+| 问句类型          |      中文含义      |                问句举例                |
+| :---------------- | :----------------: | :------------------------------------: |
+| matter_short      |      事项简称      |    中外合作办学审核审批简称是什么？    |
+| matter_daily      | 已知症状找可能疾病 |          最近老流鼻涕怎么办？          |
+| matter_code       |      事项编码      |   中外合作办学审核审批事项编码是什么   |
+| matter_level      |    疾病的并发症    |           失眠有哪些并发症？           |
+| visit_number      |      到访次数      |   中外合作办学审核审批需要到访几次？   |
+| disease_do_food   | 疾病建议吃什么食物 |             耳鸣了吃点啥？             |
+| co_department     |      联办部门      | 中外合作办学审核审批有哪几个联办部门？ |
+| handle_location   |      办理地点      |            鹅肉有什么好处？            |
+| handle_time       |      办理时间      |             肝病要吃啥药？             |
+| handle_time_limit |      办理时限      |          板蓝根颗粒能治啥病？          |
+| handle_type       |      办理类型      |           办件类型 （即办）            |
+| accept_standard   |      受理标准      |        全血细胞计数能查出啥来？        |
+| consult_phone     |      咨询电话      |           怎样才能预防肾虚？           |
+| bear_paltform     |      办理平台      |           感冒要多久才能好？           |
+| complain_phone    |      投诉电话      |            高血压要怎么治？            |
+| online_book_addr  |      在线预约      |            白血病能治好吗？            |
+| district          |     b案例层级      |          什么人容易得高血压？          |
+| theme_category    |      事项类型      |                 糖尿病                 |

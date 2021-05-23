@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 # coding: utf-8
-# File: build_policyGraph.py
-# Author: lhy<lhy_in_blcu@126.com,https://huangyong.github.io>
-# Date: 18-10-3
 
 import os
 import json
@@ -15,8 +12,8 @@ class PolicyGraph:
         cur_dir = os.getcwd()
         self.data_path = os.path.join(cur_dir, 'data/policy.json')
         self.g = Graph(
-            host="127.0.0.1",  # neo4j 搭载服务器的ip地址，ifconfig可获取到
-            http_port=7474,  # neo4j 服务器监听的端口号
+            # host="127.0.0.1",  # neo4j 搭载服务器的ip地址，ifconfig可获取到
+            # http_port=7474,  # neo4j 服务器监听的端口号
             user="neo4j",  # 数据库user name，如果没有更改过，应该是neo4j
             password="ckong")
 
@@ -49,7 +46,7 @@ class PolicyGraph:
             count += 1
             data_json = json.loads(data)
             policies = data_json["TASK_NAME"]
-            policy_dict["matter_name"] = policies
+            policy_dict["name"] = policies
             matter.append(policies)
             for cate in data_json['theme_category']:
                 theme.append(cate)
@@ -110,8 +107,8 @@ class PolicyGraph:
                 dep = data_json['DEPT_NAME']
                 management_level.append([policies, dep])
 
-            if 'matter_name' in data_json:
-                policy_dict['matter_name'] = data_json['matter_name']
+            if 'name' in data_json:
+                policy_dict['name'] = data_json['name']
 
             if 'matter_short' in data_json:
                 policy_dict['matter_short'] = data_json['matter_short']
@@ -181,7 +178,6 @@ class PolicyGraph:
             node = Node(label, name=node_name)
             self.g.create(node)
             count += 1
-            print(count, len(nodes))
         return
 
     '''创建知识图谱中心疾病的节点'''
@@ -189,7 +185,7 @@ class PolicyGraph:
     def create_policies_nodes(self, policy_infos):
         count = 0
         for policy_dict in policy_infos:
-            node = Node("Matter", matter_name=policy_dict['matter_name'], matter_short=policy_dict['matter_short'],
+            node = Node("Matter", name=policy_dict['name'], matter_short=policy_dict['matter_short'],
                         matter_daily=policy_dict['matter_daily'], matter_code=policy_dict['matter_code'],
                         matter_level=policy_dict['matter_level'], visit_number=policy_dict['visit_number'],
                         co_department=policy_dict['co_department'], handle_location=policy_dict['handle_location'],
