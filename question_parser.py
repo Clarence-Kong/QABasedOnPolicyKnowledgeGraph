@@ -4,8 +4,8 @@
 
 
 class QuestionPaser:
-
     '''构建实体节点'''
+
     def build_entitydict(self, args):
         entity_dict = {}
         for arg, types in args.items():
@@ -18,6 +18,7 @@ class QuestionPaser:
         return entity_dict
 
     '''解析主函数'''
+
     def parser_main(self, res_classify):
         args = res_classify['args']
         entity_dict = self.build_entitydict(args)
@@ -60,7 +61,17 @@ class QuestionPaser:
             elif question_type == 'handle_time_limit':
                 sql = self.sql_transfer(question_type, entity_dict.get('matter'))
 
-            elif question_type == 'check_disease':
+            elif question_type == 'material_intro':
+                sql = self.sql_transfer(question_type, entity_dict.get('matter'))
+            elif question_type == 'courier_service':
+                sql = self.sql_transfer(question_type, entity_dict.get('matter'))
+            elif question_type == 'matter_desc':
+                sql = self.sql_transfer(question_type, entity_dict.get('matter'))
+            elif question_type == 'handle_type':
+                sql = self.sql_transfer(question_type, entity_dict.get('matter'))
+            elif question_type == 'accept_standard':
+                sql = self.sql_transfer(question_type, entity_dict.get('matter'))
+            elif question_type == 'URL':
                 sql = self.sql_transfer(question_type, entity_dict.get('matter'))
 
             elif question_type == 'disease_prevent':
@@ -89,6 +100,7 @@ class QuestionPaser:
         return sqls
 
     '''针对不同的问题，分开进行处理'''
+
     def sql_transfer(self, question_type, entities):
         if not entities:
             return []
@@ -102,10 +114,17 @@ class QuestionPaser:
         # 编码
         elif question_type == 'matter_code':
             sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.matter_code".format(i) for i in entities]
+   # 编码
+        elif question_type == 'accept_standard':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.accept_standard".format(i) for i in entities]
 
         # 到现场次数
         elif question_type == 'visit_number':
             sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.visit_number".format(i) for i in entities]
+
+        # 到现场次数
+        elif question_type == 'matter_level':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.matter_level".format(i) for i in entities]
 
         # 咨询电话
         elif question_type == 'consult_phone':
@@ -115,68 +134,82 @@ class QuestionPaser:
         elif question_type == 'bear_paltform':
             sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.bear_paltform".format(i) for i in entities]
 
-        # 查询疾病的
-        elif question_type == 'disease_easyget':
+        # 联办部门
+        elif question_type == 'co_department':
             sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.easy_get".format(i) for i in entities]
 
-        # 查询疾病的相关介绍
-        elif question_type == 'disease_desc':
-            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.desc".format(i) for i in entities]
+        # 日常用语
+        elif question_type == 'matter_daily':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.matter_daily".format(i) for i in entities]
 
-        # 查询疾病有哪些症状
-        elif question_type == 'disease_symptom':
-            sql = ["MATCH (m:Matter)-[r:has_symptom]->(n:Symptom) where m.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
+        # 办理地点
+        elif question_type == 'handle_location':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.handle_location".format(i) for i in entities]
 
-        # 查询症状会导致哪些疾病
-        elif question_type == 'symptom_disease':
-            sql = ["MATCH (m:Matter)-[r:has_symptom]->(n:Symptom) where n.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
+        # 快递
+        elif question_type == 'courier_service':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.courier_service".format(i) for i in entities]
+        # 快递
+        elif question_type == 'URL':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.URL".format(i) for i in entities]
 
-        # 查询疾病的并发症
-        elif question_type == 'disease_acompany':
-            sql1 = ["MATCH (m:Matter)-[r:acompany_with]->(n:Matter) where m.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
-            sql2 = ["MATCH (m:Matter)-[r:acompany_with]->(n:Matter) where n.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
-            sql = sql1 + sql2
-        # 查询疾病的忌口
-        elif question_type == 'disease_not_food':
-            sql = ["MATCH (m:Matter)-[r:no_eat]->(n:Food) where m.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
+        # 办公时间
+        elif question_type == 'handle_time':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.handle_time".format(i) for i in entities]
 
-        # 查询疾病建议吃的东西
-        elif question_type == 'disease_do_food':
-            sql1 = ["MATCH (m:Matter)-[r:do_eat]->(n:Food) where m.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
-            sql2 = ["MATCH (m:Matter)-[r:recommand_eat]->(n:Food) where m.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
-            sql = sql1 + sql2
+        # 系统时限
+        elif question_type == 'handle_time_limit':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.handle_time_limit".format(i) for i in
+                   entities]
+
+        # 事项材料
+        elif question_type == 'material_intro':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m.name, m.material_intro".format(i) for i in entities]
 
         # 已知忌口查疾病
         elif question_type == 'food_not_disease':
-            sql = ["MATCH (m:Matter)-[r:no_eat]->(n:Food) where n.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
+            sql = ["MATCH (m:Matter)-[r:no_eat]->(n:Food) where n.name = '{0}' return m.name, r.name, n.name".format(i)
+                   for i in entities]
 
         # 已知推荐查疾病
         elif question_type == 'food_do_disease':
-            sql1 = ["MATCH (m:Matter)-[r:do_eat]->(n:Food) where n.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
-            sql2 = ["MATCH (m:Matter)-[r:recommand_eat]->(n:Food) where n.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
+            sql1 = ["MATCH (m:Matter)-[r:do_eat]->(n:Food) where n.name = '{0}' return m.name, r.name, n.name".format(i)
+                    for i in entities]
+            sql2 = [
+                "MATCH (m:Matter)-[r:recommand_eat]->(n:Food) where n.name = '{0}' return m.name, r.name, n.name".format(
+                    i) for i in entities]
             sql = sql1 + sql2
 
         # 查询疾病常用药品－药品别名记得扩充
         elif question_type == 'disease_drug':
-            sql1 = ["MATCH (m:Matter)-[r:common_drug]->(n:Drug) where m.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
-            sql2 = ["MATCH (m:Matter)-[r:recommand_drug]->(n:Drug) where m.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
+            sql1 = [
+                "MATCH (m:Matter)-[r:common_drug]->(n:Drug) where m.name = '{0}' return m.name, r.name, n.name".format(
+                    i) for i in entities]
+            sql2 = [
+                "MATCH (m:Matter)-[r:recommand_drug]->(n:Drug) where m.name = '{0}' return m.name, r.name, n.name".format(
+                    i) for i in entities]
             sql = sql1 + sql2
 
         # 已知药品查询能够治疗的疾病
         elif question_type == 'drug_disease':
-            sql1 = ["MATCH (m:Matter)-[r:common_drug]->(n:Drug) where n.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
-            sql2 = ["MATCH (m:Matter)-[r:recommand_drug]->(n:Drug) where n.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
+            sql1 = [
+                "MATCH (m:Matter)-[r:common_drug]->(n:Drug) where n.name = '{0}' return m.name, r.name, n.name".format(
+                    i) for i in entities]
+            sql2 = [
+                "MATCH (m:Matter)-[r:recommand_drug]->(n:Drug) where n.name = '{0}' return m.name, r.name, n.name".format(
+                    i) for i in entities]
             sql = sql1 + sql2
         # 查询疾病应该进行的检查
         elif question_type == 'disease_check':
-            sql = ["MATCH (m:Matter)-[r:need_check]->(n:Check) where m.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
+            sql = [
+                "MATCH (m:Matter)-[r:need_check]->(n:Check) where m.name = '{0}' return m.name, r.name, n.name".format(
+                    i) for i in entities]
 
         # 已知检查查询疾病
-        elif question_type == 'check_disease':
-            sql = ["MATCH (m:Matter)-[r:need_check]->(n:Check) where n.name = '{0}' return m.name, r.name, n.name".format(i) for i in entities]
+        elif question_type == 'matter_desc':
+            sql = ["MATCH (m:Matter) where m.name = '{0}' return m".format(i) for i in entities]
 
         return sql
-
 
 
 if __name__ == '__main__':

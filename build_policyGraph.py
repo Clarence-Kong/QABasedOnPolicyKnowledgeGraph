@@ -75,6 +75,9 @@ class PolicyGraph:
             policy_dict['online_book_addr'] = ''
             policy_dict['executer'] = ''
             policy_dict['service_object_name'] = ''
+            policy_dict['material_intro'] = ''
+            policy_dict['courier_service'] = ''
+            policy_dict['URL'] = ''
 
             if 'theme_category' in data_json:
                 for cate in data_json['theme_category']:
@@ -86,8 +89,6 @@ class PolicyGraph:
                 for cate in data_json['theme_category']:
                     for obj in data_json['service_object_name']:
                         theme_object.append([cate, obj])
-
-
 
             if 'AREA_CODE_TEXT' in data_json:
                 dep = data_json['AREA_CODE_TEXT']
@@ -119,6 +120,15 @@ class PolicyGraph:
             if 'matter_code' in data_json:
                 policy_dict['matter_code'] = data_json['matter_code']
 
+            if 'material_intro' in data_json:
+                policy_dict['material_intro'] = data_json['material_intro']
+
+            if 'courier_service' in data_json:
+                policy_dict['courier_service'] = data_json['courier_service']
+
+            if 'URL' in data_json:
+                policy_dict['URL'] = data_json['URL']
+
             if 'visit_number' in data_json:
                 policy_dict['visit_number'] = data_json['visit_number']
             if 'co_department' in data_json:
@@ -128,7 +138,7 @@ class PolicyGraph:
             if 'handle_time' in data_json:
                 policy_dict['handle_time'] = data_json['handle_time']
             if 'handle_time_limit' in data_json:
-                policy_dict['handle_time_limit'] = data_json['matter_level']
+                policy_dict['matter_level'] = data_json['matter_level']
             if 'handle_time_limit' in data_json:
                 policy_dict['handle_time_limit'] = data_json['handle_time_limit']
             if 'handle_type' in data_json:
@@ -168,7 +178,7 @@ class PolicyGraph:
             policy_infos.append(policy_dict)
         return set(matter), set(theme), set(man), set(power), set(department), set(district), policy_infos, \
                consists_of, theme_object, theme_category, matter_object, belong_to, \
-               management_level, own_resonsibility, accrual_item, govern_thing
+               management_level, own_resonsibility, accrual_item, govern_thing,
 
     '''建立节点'''
 
@@ -195,7 +205,9 @@ class PolicyGraph:
                         bear_paltform=policy_dict['bear_paltform'], complain_phone=policy_dict['complain_phone'],
                         charge=policy_dict['charge'], online_book=policy_dict['online_book'],
                         online_book_addr=policy_dict['online_book_addr'], executer=policy_dict['executer'],
-                        service_object_name=policy_dict['service_object_name'])
+                        service_object_name=policy_dict['service_object_name'],
+                        material_intro=policy_dict['material_intro'],
+                        URL=policy_dict['URL'])
             self.g.create(node)
             count += 1
             print(count)
@@ -228,7 +240,7 @@ class PolicyGraph:
         Matter, Theme, Man, Power, Department, District, policy_infos, consists_of, \
         theme_object, theme_category, matter_object, belong_to, management_level, own_resonsibility, \
         accrual_item, govern_thing = self.read_nodes()
-        print(matter_object,'matter ob-----')
+        print(matter_object, 'matter ob-----')
         self.create_relationship('Matter', 'Theme', theme_category, 'theme_category', '服务主题')
         self.create_relationship('Theme', 'Man', theme_object, 'theme_object', '对象')
         self.create_relationship('District', 'Department', consists_of, 'consists_of', '下设')

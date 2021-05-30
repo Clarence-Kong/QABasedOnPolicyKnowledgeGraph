@@ -3,7 +3,7 @@
 
 class CutWords:
     def __init__(self):
-        dict_path = './disease.txt'
+        dict_path = './matter.txt'
         self.word_dict, self.max_wordlen = self.load_words(dict_path)
 
     # 加载词典

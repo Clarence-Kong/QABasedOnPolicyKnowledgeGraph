@@ -8,6 +8,7 @@ from lxml import etree
 import pymongo
 import re
 
+
 # mongoexport -h 127.0.0.1 -d policy -c test -o C:\Users\ckong\projects\QABasedOnPolicyKnowledgeGraph\data\policy.json
 # mongoexport --db=policy --collection=test --out=policy.json
 
@@ -35,6 +36,19 @@ class MainData:
         selector = etree.HTML(html)
         return selector
 
+    ''' 获取材料表格 '''
+
+    def get_material_table(self, table):
+        tr = table.xpath('.//tr')
+        material = []
+        if tr:
+            for i in tr:
+                m = i.xpath('.//td[2]/text()')
+                if m and m[0]:
+                    if m[0].strip():
+                        material.append(m[0].strip())
+        return material
+
     '''获取详细政务信息'''
 
     def get_matter_info(self, task_id):
@@ -53,12 +67,18 @@ class MainData:
             0].strip()
         info['co_department'] = selector.xpath('//th[contains(text(),"联办机构")]/following-sibling::td[1]/p/text()')[
             0].strip()
-        info['handle_location'] = selector.xpath('//h2[contains(text(),"窗口办理")]/following-sibling::div[1]/p[2]/text()')[
-            0].strip()
+        if (selector.xpath('//h2[contains(text(),"窗口办理")]/following-sibling::div[1]/p[2]/text()')):
+            info['handle_location'] = \
+                selector.xpath('//h2[contains(text(),"窗口办理")]/following-sibling::div[1]/p[2]/text()')[
+                    0].strip()
+        else:
+            info['handle_location'] = '无线下办理窗口'
         info['handle_time'] = selector.xpath('//th[contains(text(),"法定办结时限")]/following-sibling::td[1]/p/text()')[
-            0].strip()
+            0].replace('\n', '').replace('\t', '').replace(' ', '').replace('\xa0', '')
         info['handle_time_limit'] = \
-            selector.xpath('//th[contains(text(),"承诺办结时限")]/following-sibling::td[1]/p/text()')[0].strip()
+            selector.xpath('//th[contains(text(),"承诺办结时限")]/following-sibling::td[1]/p/text()')[0].replace('\n',
+                                                                                                           '').replace(
+                '\t', '').replace(' ', '').replace('\xa0', '')
         info['matter_type'] = selector.xpath('//th[contains(text(),"事项类型")]/following-sibling::td[1]/p/text()')[
             0].strip()
         info['accept_standard'] = selector.xpath('//h3[contains(text(),"受理条件")]/following-sibling::p[1]/text()')[
@@ -66,26 +86,46 @@ class MainData:
         info['consult_phone'] = selector.xpath('//p[contains(text(),"咨询电话")]/following-sibling::p[1]/text()')[0].strip()
         info['district'] = selector.xpath('//th[contains(text(),"行使层级")]/following-sibling::td[1]/p/text()')[
             0].strip()
-        info['courier_service'] = selector.xpath('//th[contains(text(),"是否支持物流快递")]/following-sibling::td[1]/p/text()')[
+        if (selector.xpath('//th[contains(text(),"是否支持物流快递")]/following-sibling::td[1]/p/text()')):
+            info['courier_service'] = \
+                selector.xpath('//th[contains(text(),"是否支持物流快递")]/following-sibling::td[1]/p/text()')[
+                    0].strip()
+        else:
+            info['courier_service'] = "不支持"
+        info['online_payment'] = selector.xpath('//th[contains(text(),"是否支持网上支付")]/following-sibling::td[1]/p/text()')[
             0].strip()
         info['bear_paltform'] = selector.xpath('//th[contains(text(),"业务系统")]/following-sibling::td[1]/p/text()')[
             0].strip()
         info['complain_phone'] = selector.xpath('//p[contains(text(),"投诉电话")]/following-sibling::p[1]/text()')[
             0].strip()
         # info['charge'] = selector.xpath('//h2[contains(text(),"收费项目信息")]/following-sibling::p[1]/text()')[0].strip()
-        info['online_book'] = selector.xpath('//th[contains(text(),"是否网办")]/following-sibling::td[1]/text()')[0].strip()
-        info['online_book_addr'] = selector.xpath("//th[contains(text(),'在线预约地址')]/following-sibling::td[1]//a/@href")[
-            0]
+        if (selector.xpath('//th[contains(text(),"是否网办")]/following-sibling::td[1]/text()')):
+            info['online_book'] = selector.xpath('//th[contains(text(),"是否网办")]/following-sibling::td[1]/text()')[
+                0].strip()
+        elif (selector.xpath('//th[contains(text(),"是否网办")]/following-sibling::td[1]/p/text()')):
+            info['online_book'] = selector.xpath('//th[contains(text(),"是否网办")]/following-sibling::td[1]/p/text()')[
+                0].strip()
+        if selector.xpath("//th[contains(text(),'在线预约地址')]/following-sibling::td[1]//a/@href"):
+            info['online_book_addr'] = \
+                selector.xpath("//th[contains(text(),'在线预约地址')]/following-sibling::td[1]//a/@href")[
+                    0]
+        else:
+            info['online_book_addr'] = '无'
         info['executer'] = selector.xpath('//th[contains(text(),"实施主体")]/following-sibling::td[1]/a/text()')[0].strip()
-        info['theme_category'] = selector.xpath('//th[contains(text(),"面向自然人事项主题分类")]/following-sibling::td[1]/p/text()')[0].strip().split(',')
-        info['service_object_name'] = selector.xpath('//th[contains(text(),"服务对象")]/following-sibling::td[1]/p/text()')[0].strip().split(',')
-
+        info['theme_category'] = \
+            selector.xpath('//th[contains(text(),"面向自然人事项主题分类")]/following-sibling::td[1]/p/text()')[0].strip().split(
+                ',')
+        info['service_object_name'] = selector.xpath('//th[contains(text(),"服务对象")]/following-sibling::td[1]/p/text()')[
+            0].strip().split(',')
+        # print(selector.xpath('//div[@id="matters-cond"]//table'), 'div------------')
+        if selector.xpath('//div[@id="matters-cond"]//table'):
+            info['material_intro'] = self.get_material_table(selector.xpath('//div[@id="matters-cond"]//table')[0])
+        else:
+            info['material_intro'] = "无"
         # info['collect_resource_center'] = selector.xpath('')
         # info['service_content'] = selector.xpath('')
-        # info['material_intro'] = selector.xpath('')
         # info['involved_mediation'] = selector.xpath('')
         # info['application_material'] = selector.xpath('')
-        # info['online_payment'] = selector.xpath('')
         # info['certification_level_requirement'] = selector.xpath('')
         # info['setting_basis'] = selector.xpath('')
         # info['service_theme_name'] = selector.xpath('')
@@ -95,13 +135,15 @@ class MainData:
     ''' 获取每条政务信息 '''
 
     def get_page_data(self):
+        # url = "http://www.gdzwfw.gov.cn/portal/item-solr/getCommonAuditItem"
         url = "http://www.gdzwfw.gov.cn/portal/item-solr/getCommonAuditItem"
         data_req = {
             "pageNum": 1,
             "pageSize": 10,
             "TASK_TYPE": '',
             "DEPT_CODE": '',
-            "AREA_CODE": 442000,
+            # "AREA_CODE": 442000,
+            "AREA_CODE": 440000,
             "ISLOCALLEVEL": 0,
             "KEY_WORD": '',
             "TYPE"'': '',
@@ -132,7 +174,7 @@ class MainData:
             "X-Requested-With": "XMLHttpRequest"
         }
         count = 0
-        for page in range(49, 51):
+        for page in range(0, 500):
             print('data page num is : ', page)
             data_req['pageNum'] = page
             res = requests.post(url, data=data_req, headers=headers_req)
@@ -146,7 +188,7 @@ class MainData:
                 custom = data['CUSTOM']
                 all_list = custom['AUDIT_ITEMLIST']
                 # print(all_list)
-                for index in range(0, len(all_list)):
+                for index in range(0, 10):
                     print('名称: ', all_list[index]['TASK_NAME'])
                     count = count + 1
                     info = self.get_matter_info(all_list[index]['TASK_CODE'])
@@ -175,7 +217,9 @@ class MainData:
                     all_list[index]['district'] = info['district']
                     all_list[index]['theme_category'] = info['theme_category']
                     all_list[index]['service_object_name'] = info['service_object_name']
+                    all_list[index]['material_intro'] = info['material_intro']
                     self.col.insert(all_list[index])
+                    # print(all_list[index])
 
                 print('页数: ', page, ' 总数：', count)
                 time.sleep(1)

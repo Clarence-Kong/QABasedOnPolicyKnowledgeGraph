@@ -44,12 +44,19 @@ class AnswerSearcher:
 
         elif question_type == 'matter_code':
             code = answers[0]['m.matter_code']
-            print(answers, 'ans')
             subject = answers[0]['m.name']
             if code:
                 final_answer = '事项 {0} 的事项编码是：{1}'.format(subject, '；'.join(list(set(code))[:self.num_limit]))
             else:
                 final_answer = '{0} 没有事项编码'.format(subject)
+
+        elif question_type == 'URL':
+            URL = answers[0]['m.URL']
+            subject = answers[0]['m.name']
+            if URL:
+                final_answer = '事项 {0} 的在线办理地址是：{1}'.format(subject, URL)
+            else:
+                final_answer = '{0} 没有在线办理地址'.format(subject)
 
         elif question_type == 'visit_number':
             num = answers[0]['m.visit_number']
@@ -64,7 +71,6 @@ class AnswerSearcher:
 
         elif question_type == 'consult_phone':
             phone = answers[0]['m.consult_phone']
-            print(answers,'ans')
             subject = answers[0]['m.name']
             if phone:
                 final_answer = '{0}事项的咨询电话是：{1}'.format(subject, phone)
@@ -79,38 +85,89 @@ class AnswerSearcher:
             else:
                 final_answer = '{0} 不知道是哪个系统'.format(subject)
 
-        elif question_type == 'disease_cureway':
-            desc = [';'.join(i['m.cure_way']) for i in answers]
+        elif question_type == 'co_department':
+            de = answers[0]['m.bear_paltform']
             subject = answers[0]['m.name']
-            final_answer = '{0}可以尝试如下治疗：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
+            if de:
+                co_department = [','.join(i['m.co_department']) for i in answers]
+                final_answer = '{0}是由：{1}联合办理的'.format(subject, '；'.join(list(set(co_department))[:self.num_limit]))
+            else:
+                final_answer = '{0}没有联办部门'.format(subject)
 
-        elif question_type == 'disease_cureprob':
-            desc = [i['m.cured_prob'] for i in answers]
+        elif question_type == 'matter_daily':
+            daily = answers[0]['m.matter_daily']
             subject = answers[0]['m.name']
-            final_answer = '{0}治愈的概率为（仅供参考）：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
+            if daily:
+                final_answer = '{0}的日常用用语：{1}'.format(subject, daily)
+            else:
+                final_answer = '{0} 没有日常用语'.format(subject)
 
-        elif question_type == 'disease_easyget':
-            desc = [i['m.easy_get'] for i in answers]
+        elif question_type == 'matter_level':
+            level = answers[0]['m.matter_level']
             subject = answers[0]['m.name']
+            if level:
+                final_answer = '{0}的办事层级是：{1}'.format(subject, level)
+            else:
+                final_answer = '{0} 不知道是哪个层级'.format(subject)
 
-            final_answer = '{0}的易感人群包括：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
-
-        elif question_type == 'disease_desc':
-            desc = [i['m.desc'] for i in answers]
+        elif question_type == 'handle_time_limit':
+            daily = answers[0]['m.handle_time_limit']
             subject = answers[0]['m.name']
-            final_answer = '{0},熟悉一下：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
+            if daily == "无":
+                final_answer = '{0} 不知道要多久'.format(subject)
+            elif daily:
+                final_answer = '{0}最多：{1} 能办理好'.format(subject, daily)
+            else:
+                final_answer = '{0} 不知道要多久'.format(subject)
 
-        elif question_type == 'disease_acompany':
-            desc1 = [i['n.name'] for i in answers]
-            desc2 = [i['m.name'] for i in answers]
+        elif question_type == 'handle_location':
+            daily = answers[0]['m.handle_location']
             subject = answers[0]['m.name']
-            desc = [i for i in desc1 + desc2 if i != subject]
-            final_answer = '{0}的症状包括：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
+            if daily:
+                final_answer = '{0}{1}'.format(subject, daily)
+            else:
+                final_answer = '{0} 没有具体地点'.format(subject)
 
-        elif question_type == 'disease_not_food':
-            desc = [i['n.name'] for i in answers]
+        elif question_type == 'courier_service':
+            courier_service = answers[0]['m.courier_service']
             subject = answers[0]['m.name']
-            final_answer = '{0}忌食的食物包括有：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
+            if courier_service:
+                final_answer = '{0}支持快递材料服务：{1}'.format(subject, courier_service)
+            else:
+                final_answer = '{0} 不能快递材料'.format(subject)
+
+        elif question_type == 'handle_time':
+            time = answers[0]['m.handle_time']
+            subject = answers[0]['m.name']
+            if time:
+                final_answer = '{0}的法定时限是：{1}'.format(subject, time)
+            else:
+                final_answer = '{0} 没有具体时间限制'.format(subject)
+
+        elif question_type == 'handle_time_limit':
+            time = answers[0]['m.handle_time_limit']
+            subject = answers[0]['m.name']
+            if time:
+                final_answer = '{0}的系统时限是：{1}'.format(subject, time)
+            else:
+                final_answer = '{0} 没有具体时间限制'.format(subject)
+
+        elif question_type == 'material_intro':
+            intro = answers[0]['m.material_intro']
+            subject = answers[0]['m.name']
+            if intro:
+                all = ','.join(intro)
+                final_answer = '{0}需要准备：{1}'.format(subject, all)
+            else:
+                final_answer = '{0}的办理不需要提供材料'.format(subject)
+
+        elif question_type == 'accept_standard':
+            intro = answers[0]['m.accept_standard']
+            subject = answers[0]['m.name']
+            if intro:
+                final_answer = '{0}的办理条件是：{1}'.format(subject, intro)
+            else:
+                final_answer = '{0}不知道要什么条件'.format(subject)
 
         elif question_type == 'disease_do_food':
             do_desc = [i['n.name'] for i in answers if i['r.name'] == '宜吃']
@@ -144,7 +201,7 @@ class AnswerSearcher:
             subject = answers[0]['m.name']
             final_answer = '{0}通常可以通过以下方式检查出来：{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))
 
-        elif question_type == 'check_disease':
+        elif question_type == 'matter_desc':
             desc = [i['m.name'] for i in answers]
             subject = answers[0]['n.name']
             final_answer = '通常可以通过{0}检查出来的疾病有{1}'.format(subject, '；'.join(list(set(desc))[:self.num_limit]))

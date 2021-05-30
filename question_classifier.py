@@ -34,16 +34,18 @@ class QuestionClassifier:
         self.matter_daily = ['日常用语', '常用语']
         self.matter_code = ['编码', '事项编码']
         self.matter_level = ['事项层级', '层级']
-        self.visit_number = ['次数', '几次', '去几次']
-        self.co_department = ['部门', '几个部门', '联办', '几个部门']
-        self.handle_location = ['怎么办理', '如何办理', '怎么办理', '哪里办理', '办理地点']
+        self.visit_number = ['次数', '几次', '去几次', '线下办理']
+        self.co_department = ['部门', '几个部门', '联办', '几个部门', "一起"]
+        self.handle_location = ['地点','地址', '怎么办理', '如何办理', '怎么办理', '哪里办理', '办理地点']
         self.handle_time_limit = ['多久能办好', '要多久', '多长时间', '几天', '几个工作日', '耗时多久']
-        self.handle_time = ['上班时间', '工作时间', '办公时间', '什么人', '哪些人', '感染', '染上', '得上']
+        self.handle_time = ['法定时间', '最多多久', '规定多久办好', '规定多久']
         self.handle_type = ['承诺办结', '最多多久']
         self.accept_standard = ['受理条件', '什么条件', '办理条件', '办理资格']
-        self.consult_phone = ['咨询电话', '客服', '客服电话', '怎么咨询',
-                              '有什么好处', '有什么益处', '有何益处', '用来', '用来做啥', '用来作甚', '需要', '要']
+        self.consult_phone = ['咨询电话', '客服', '客服电话', '怎么咨询']
         self.bear_paltform = ['业务系统', '办理系统', '承办系统', '哪个系统']
+        self.matter_intro = ['材料', '哪些材料', '准备什么', '哪些文件']
+        self.courier_service = ['快递', '可以快递', '快递材料', '支持快递']
+        self.URL = ['哪里办理', '网站', '网址','地址']
         print('model init finished ......')
 
         return
@@ -69,7 +71,7 @@ class QuestionClassifier:
             question_type = 'matter_short'
             question_types.append(question_type)
         #
-        if self.check_words(self.matter_daily, question) and ('symptom' in types):
+        if self.check_words(self.matter_daily, question) and ('matter' in types):
             question_type = 'matter_daily'
             question_types.append(question_type)
 
@@ -84,25 +86,24 @@ class QuestionClassifier:
 
         # 办事层级
         if self.check_words(self.matter_level, question) and 'matter' in types:
-            deny_status = self.check_words(self.deny_words, question)
-            # if deny_status:
-            #     question_type = 'matter_not_power'
-            # else:
             question_type = 'matter_level'
             question_types.append(question_type)
-
-        # # 已知食物找疾病
-        # if self.check_words(self.matter_level + self.consult_phone, question) and 'power' in types:
-        #     deny_status = self.check_words(self.deny_words, question)
-        #     # if deny_status:
-        #     #     question_type = 'power_not_matter'
-        #     # else:
-        #     question_type = 'power_do_matter'
-        #     question_types.append(question_type)
+        # 办事层级
+        if self.check_words(self.accept_standard, question) and 'matter' in types:
+            question_type = 'accept_standard'
+            question_types.append(question_type)
+        # 网站
+        if self.check_words(self.URL, question) and 'matter' in types:
+            question_type = 'URL'
+            question_types.append(question_type)
 
         # 到访次数
         if self.check_words(self.visit_number, question) and 'matter' in types:
             question_type = 'visit_number'
+            question_types.append(question_type)
+        # 快递
+        if self.check_words(self.courier_service, question) and 'matter' in types:
+            question_type = 'courier_service'
             question_types.append(question_type)
 
         # 咨询电话
@@ -145,9 +146,14 @@ class QuestionClassifier:
             question_type = 'handle_time_limit'
             question_types.append(question_type)
 
+        # 材料
+        if self.check_words(self.matter_intro, question) and 'matter' in types:
+            question_type = 'material_intro'
+            question_types.append(question_type)
+
         # 若没有查到相关的外部查询信息，那么则将该疾病的描述信息返回
-        if question_types == [] and 'matter' in types:
-            question_types = ['matter_desc']
+        # if question_types == [] and 'matter' in types:
+        #     question_types = ['matter_desc']
 
         # # 若没有查到相关的外部查询信息，那么则将该疾病的描述信息返回
         # if question_types == [] and 'symptom' in types:

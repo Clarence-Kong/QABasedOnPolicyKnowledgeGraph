@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Author: Clarence Kong<clarencekong@qq.com,https://github.com/Clarence-Kong>
 # @Time: 4/29/2021 8:59 AM
-
+import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -53,4 +53,10 @@ def answer(que: str):
     # ans = ChatBotGraph.chat_main(que)
     ans = hand.chat_main(que)
     msg = f'ans'
-    return {'success': True, 'msg': ans}
+    print('ask: ',que)
+    print('ans: ',ans)
+    return {'success': True, 'msg': ','.join(ans.split('\n'))}
+
+
+if __name__ == '__main__':
+    uvicorn.run(app='answer_req:app', port=20230)
